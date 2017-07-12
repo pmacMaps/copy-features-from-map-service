@@ -9,6 +9,7 @@
 #              from map/feature services to a feature class.
 #
 # Created:     6/14/2017
+# Updated:     7/12/2017
 # Copyright:
 # Licence:
 #-------------------------------------------------------------------------------
@@ -20,11 +21,12 @@ import arcpy, urllib, urllib2, json, os, math, sys
 def copyFeaturesFromService(service, featureClass, logFile, agsServer=False, agolServer=False, tokenUrlPart='', username='', password=''):
     """ Function to copy features from a map or feature service to a feature class.
         service = the URL for the map/feature service. You must include the number at the end (/0).
-        tokenURLPart = the component of an ArcGIS Server URL for generating tokens. Do not include the preceding '/'.
-        You should only need to put in a tokenURLPart variable if using a secured service
+        featureClass = the output location and name of the layer you are copying data to.
+        logFile = the text file you write the messages too
         agsServer = set to True if the service is hosted on ArcGIS for Server.
         agolServer = set to True if the service is hostedon ArcGIS Online.
-        featureClass = the output location and name of the layer you are copying data to.
+        tokenURLPart = the component of an ArcGIS Server URL for generating tokens. Do not include the preceding '/'.
+        You should only need to put in a tokenURLPart variable if using a secured service
         username = the username for a secured service.  Leave blank for unsecured services.
         password = the password for a secured service.  Leave blank for unsecured services.
      """
