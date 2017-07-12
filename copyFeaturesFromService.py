@@ -6,7 +6,8 @@
 #
 # Description: Script based upon map service extract tool developed by Jake
 #              Skinner from Esri.  Module contains a function for copying data
-#              from map/feature services to a feature class.
+#              from map/feature services to a feature class.  If there is an
+#              error retreiving the service, you can send an e-mail alert.
 #
 # Created:     6/14/2017
 # Updated:     7/12/2017
@@ -15,14 +16,15 @@
 #-------------------------------------------------------------------------------
 
 # import modules
-import arcpy, urllib, urllib2, json, os, math, sys
+import arcpy, urllib, urllib2, json, os, math, sys, emailModule
 
 # Function to copy features from a map or feature service to a feature class
-def copyFeaturesFromService(service, featureClass, logFile, agsServer=False, agolServer=False, tokenUrlPart='', username='', password=''):
+def copyFeaturesFromService(service, featureClass, logFile, email , agsServer=False, agolServer=False, tokenUrlPart='', username='', password=''):
     """ Function to copy features from a map or feature service to a feature class.
         service = the URL for the map/feature service. You must include the number at the end (/0).
         featureClass = the output location and name of the layer you are copying data to.
-        logFile = the text file you write the messages too
+        logFile = the text file messages will be written to
+        email = the e-mail address to send a message to if the service URL is down
         agsServer = set to True if the service is hosted on ArcGIS for Server.
         agolServer = set to True if the service is hostedon ArcGIS Online.
         tokenURLPart = the component of an ArcGIS Server URL for generating tokens. Do not include the preceding '/'.
@@ -42,6 +44,24 @@ def copyFeaturesFromService(service, featureClass, logFile, agsServer=False, ago
         # scratch workspace
         # http://pro.arcgis.com/en/pro-app/tool-reference/environment-settings/scratch-gdb.htm
         env.workspace = env.scratchGDB
+
+        # test if URL is valid
+        logMsg += '\nTesting if {} is a valid URL.\n'.format(service)
+
+        try:
+            # open service to make sure it is a valid url
+            testReq = urllib2.urlopen(service)
+        except urllib2.URLError as e:
+            logMsg += '\nThere was an error accessing the service.\n'
+            logMsg += '\nError: {}\n'.format(str(e))
+            # e-mail arguments
+            emailSubject = 'Map Service Down'
+            emailMessage = 'Your service, {}, appeared to be down when we tried to access it.\n'.format(service)
+            emailMessage += '\nError: {}\n'.format(str(e))
+            # send email
+            emailModule.sendEmail(emailMessage,emailSubject,email)
+            # log that e-mail has been sent
+            logMsg += '\n{} has been sent an e-mail about service {} being down\n'.format(email,service)
 
         # service url with '/query' appended
         baseURL = r'{}/query'.format(service)
