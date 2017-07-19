@@ -24,7 +24,7 @@ def copyFeaturesFromService(service, featureClass, logFile, email , agsServer=Fa
         service = the URL for the map/feature service. You must include the number at the end (/0).
         featureClass = the output location and name of the layer you are copying data to.
         logFile = the text file messages will be written to
-        email = the e-mail address to send a message to if the service URL is down
+        email = a list of e-mail address(es) to send a message to if the service URL is down
         agsServer = set to True if the service is hosted on ArcGIS for Server.
         agolServer = set to True if the service is hostedon ArcGIS Online.
         tokenURLPart = the component of an ArcGIS Server URL for generating tokens. Do not include the preceding '/'.
@@ -61,7 +61,9 @@ def copyFeaturesFromService(service, featureClass, logFile, email , agsServer=Fa
             # send email
             emailModule.sendEmail(emailMessage,emailSubject,email)
             # log that e-mail has been sent
-            logMsg += '\n{} has been sent an e-mail about service {} being down\n'.format(email,service)
+            for address in email:
+                logMsg += '\n{} has been sent an e-mail about service {} being down\n'.format(address,service)
+            # end for
 
         # service url with '/query' appended
         baseURL = r'{}/query'.format(service)

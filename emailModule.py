@@ -3,7 +3,11 @@ import smtplib
 from email.mime.text import MIMEText
 
 def sendEmail(message,subject,receiver):
-    """ Send an e-mail. """
+    """ Send an e-mail.
+    message = message to send in the e-mail
+    subject = the subject for the e-mail
+    receiver = a list of recipient(s) for the e-mail
+    """
     # the e-mail address sending the message
     sender = ""
     # username for the sender e-mail
@@ -18,7 +22,8 @@ def sendEmail(message,subject,receiver):
     # sender
     msg['From'] = sender
     # receiver
-    msg['To'] = receiver
+    COMMASPACE = ', ' # used to seperate e-mail addresses in list of recipients
+    msg['To'] = COMMASPACE.join(receiver)
 
     # create a connection to server
     server = smtplib.SMTP_SSL('your mail server', 'port number as integar')

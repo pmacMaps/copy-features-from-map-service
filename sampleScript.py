@@ -10,8 +10,10 @@ logFile = r'[path]\[to]\[file]\Results.txt'
 # geodatabase to store feature classes in
 fgdb = r'[path]\[to]\[file]\Geodata.gdb'
 
-# email address to send notification to
-email = 'johnDoe@emailwebsite.com'
+# single email address to send notification to
+email = ['johnDoe@emailwebsite.com']
+# send email notification to multiple e-mail addresses
+email = ['johnDoe@emailwebsite.com', 'jessesjames@outlaw.com', 'allyourbasearebelongtous@evilvillian.biz']
 
 # sample layer - unsecured
 portlandHeritageTreesService = r'https://services.arcgis.com/rOo16HdIMeOBI4Mb/arcgis/rest/services/Heritage_Trees_Portland/FeatureServer/0'
