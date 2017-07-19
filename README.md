@@ -16,7 +16,7 @@ The following are the parameters for the function:
 - **service:** URL for the map or feature service you want to copy records from, with the trailing number
 - **featureClass:** The feature class where you will copy the records to
 - **logFile:** The text file you will write messages to
-- **email:** The e-mail address you want to send the notification to
+- **email:** A list of e-mail address(es) you want to send the notification to
 - **agsServer:** If the service comes from an ArcGIS Server (True or False), defaults to False
 - **agolServer:** If the service comes from ArcGIS Online (True or False), defaults to False
 - **tokenURLPart:** The token URL part of the ArcGIS Server for generating tokens.  This should only be required for secured services. Defaults to ''
