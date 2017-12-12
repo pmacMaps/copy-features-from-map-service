@@ -2,23 +2,33 @@
 
 # import module
 import copyFeaturesFromService, os
+from arcpy import env
+
+# allows feature classes to be overwritten each time data is copied from service
+# if not set to True and feature class already exists, an error will be produced
+env.overwriteOutput = True
 
 # log file to write messages to
 # update path and file name
 logFile = r'[path]\[to]\[file]\Results.txt'
 
+# placeholder for messages for text file
+logMsg = ''
+
 # geodatabase to store feature classes in
 fgdb = r'[path]\[to]\[file]\Geodata.gdb'
 
 # sample layer - unsecured
-portlandHeritageTreesService = r'https://services.arcgis.com/rOo16HdIMeOBI4Mb/arcgis/rest/services/Heritage_Trees_Portland/FeatureServer/0'
+logMsg += 'Copying US States\n'
+# service URL
+statesService = r'https://sampleserver6.arcgisonline.com/arcgis/rest/services/Census/MapServer/3'
 # feature class name
-portlandHeritageTrees = os.path.join(fgdb, 'PortlandTrees')
-
+statesFC = os.path.join(fgdb, 'US_States')
 # call function on portland trees
-copyFeaturesFromService.copyFeaturesFromService(portlandHeritageTreesService,portlandHeritageTrees,logFile,False,True)
+copyFeaturesFromService.copyFeaturesFromService(statesService,statesFC,logFile,True)
 
 # sample layer - secured
+logMsg += '\nCopying Wildfire Response\n'
 # based on Esri Leaflet sample - https://esri.github.io/esri-leaflet/examples/arcgis-server-auth.html
 wildfireResponseService = r'https://sampleserver6.arcgisonline.com/arcgis/rest/services/Wildfire_secure_ac/MapServer/0'
 # feature class name

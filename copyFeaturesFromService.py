@@ -261,8 +261,16 @@ def copyFeaturesFromService(service, featureClass, logFile, agsServer=False, ago
                                 logMsg += '\nFailed at Line %i \n' % tbE.tb_lineno
                                 logMsg += '\nError: {}\n'.format(e.message)
 
-                except:
-                    pass
+                except EnvironmentError as e:
+                    tbE = sys.exc_info()[2]
+                    # Write the line number the error occured to the log file
+                    logMsg += '\nFailed at Line %i \n' % tbE.tb_lineno
+                    logMsg += '\nError: {}\n'.format(str(e))
+                except Exception as e:
+                    tbE = sys.exc_info()[2]
+                    # Write the line number the error occured to the log file
+                    logMsg += '\nFailed at Line %i \n' % tbE.tb_lineno
+                    logMsg += '\nError: {}\n'.format(e.message)
 
                 x += 1000
                 y += 1000
