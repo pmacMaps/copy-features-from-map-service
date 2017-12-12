@@ -2,10 +2,18 @@
 
 # import module
 import copyFeaturesFromService, os
+from arcpy import env
+
+# set to True to allow for feature classes to be overwritten
+# each time script is run is feature class name is the same
+env.overwriteOutput = True
 
 # log file to write messages to
 # update path and file name
 logFile = r'[path]\[to]\[file]\Results.txt'
+
+# placeholder for messages for log file
+logMsg = ''
 
 # geodatabase to store feature classes in
 fgdb = r'[path]\[to]\[file]\Geodata.gdb'
@@ -16,14 +24,17 @@ email = ['johnDoe@emailwebsite.com']
 email = ['johnDoe@emailwebsite.com', 'jessesjames@outlaw.com', 'allyourbasearebelongtous@evilvillian.biz']
 
 # sample layer - unsecured
-portlandHeritageTreesService = r'https://services.arcgis.com/rOo16HdIMeOBI4Mb/arcgis/rest/services/Heritage_Trees_Portland/FeatureServer/0'
+logMsg += 'Copying US States\n'
+# service URL
+statesService = r'https://sampleserver6.arcgisonline.com/arcgis/rest/services/Census/MapServer/3'
 # feature class name
-portlandHeritageTrees = os.path.join(fgdb, 'PortlandTrees')
+statesFC = os.path.join(fgdb, 'US_States')
 
 # call function on portland trees
-copyFeaturesFromService.copyFeaturesFromService(portlandHeritageTreesService,portlandHeritageTrees,logFile,email,False,True)
+copyFeaturesFromService.copyFeaturesFromService(statesService,statesFC,logFile,email,True)
 
 # sample layer - secured
+logMsg += '\nCopying Wildfire Response\n'
 # based on Esri Leaflet sample - https://esri.github.io/esri-leaflet/examples/arcgis-server-auth.html
 wildfireResponseService = r'https://sampleserver6.arcgisonline.com/arcgis/rest/services/Wildfire_secure_ac/MapServer/0'
 # feature class name
