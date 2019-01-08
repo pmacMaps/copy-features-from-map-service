@@ -1,5 +1,5 @@
 #-------------------------------------------------------------------------------
-# Name:        Copy Features from Map/Feature Service Module
+# Name:        Copy Features from Map/Feature Service Module with Email Option
 # Purpose:
 #
 # Author:      Jake Skinner, Esri; Patrick McKinney, Cumberland County GIS
@@ -9,8 +9,13 @@
 #              from map/feature services to a feature class.  If there is an
 #              error retreiving the service, you can send an e-mail alert.
 #
+# Note:        When we turned off our REST services Home Directory, this script
+#              started sending e-mails about the service being down (403 error)
+#              However, the data was still copied from the service.  I added a
+#              special clause for 403 errors to try to mitigate this issue.
+#
 # Created:     6/14/2017
-# Updated:     7/12/2017
+# Updated:     1/8/2019
 # Copyright:
 # Licence:
 #-------------------------------------------------------------------------------
@@ -49,21 +54,36 @@ def copyFeaturesFromService(service, featureClass, logFile, email , agsServer=Fa
         logMsg += '\nTesting if {} is a valid URL.\n'.format(service)
 
         try:
-            # open service to make sure it is a valid url
-            testReq = urllib2.urlopen(service)
-        except urllib2.URLError as e:
-            logMsg += '\nThere was an error accessing the service.\n'
-            logMsg += '\nError: {}\n'.format(str(e))
-            # e-mail arguments
-            emailSubject = 'Map Service Down'
-            emailMessage = 'Your service, {}, appeared to be down when we tried to access it.\n'.format(service)
-            emailMessage += '\nError: {}\n'.format(str(e))
-            # send email
-            emailModule.sendEmail(emailMessage,emailSubject,email)
-            # log that e-mail has been sent
-            for address in email:
-                logMsg += '\n{} has been sent an e-mail about service {} being down\n'.format(address,service)
-            # end for
+            try:
+                # open service to make sure it is a valid url
+                testReq = urllib2.urlopen(service)
+            except urllib2.HTTPError as e:
+                error_code = e.code
+                error_reason = e.reason
+                # content for e-mail message
+                # e-mail arguments
+                emailSubject = 'Map Service Down'
+                emailMessage = 'Your service, {}, appeared to be down when we tried to access it.\n'.format(service)
+                emailMessage += '\nError Code: {}; Error Reason: {}\n'.format(error_code, error_reason)
+                # handle 403 errors seperately. These can occur if REST Home Directories are disabled
+                if error_code == 403:
+                    logMsg += '\nThere may have been an error accessing the service.\n'
+                    logMsg += '\nError Code: {}; Error Reason: {}\n'.format(error_code, error_reason)
+                    logMsg += '\nIf this error is a result of the ArcGIS REST Home Directory being disabled, the data should still copy over unless there is another error.\n'
+                    # add additional e-mail message
+                    emailMessage += '\nIf this error resulted because the ArcGIS REST Home Directory is disabled, the data should still copy over.\n'
+                else:
+                    logMsg += '\nThere was an error accessing the service.\n'
+                    logMsg += '\nError Code: {}; Error Reason: {}\n'.format(error_code, error_reason)
+                # send email
+                emailModule.sendEmail(emailMessage,emailSubject,email)
+                # log that e-mail has been sent
+                for address in email:
+                    logMsg += '\n{} has been sent an e-mail about service {} being down\n'.format(address,service)
+                # end for
+        except:
+            pass
+            # do messages occur for copying the data over?
 
         # service url with '/query' appended
         baseURL = r'{}/query'.format(service)
