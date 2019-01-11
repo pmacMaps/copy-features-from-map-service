@@ -8,6 +8,8 @@
 #              Skinner from Esri.  Module contains a function for copying data
 #              from map/feature services to a feature class.  If there is an
 #              error retreiving the service, you can send an e-mail alert.
+#              This script is based upon the tool availabled at
+#              https://community.esri.com/docs/DOC-6496-download-arcgis-online-feature-service-or-arcgis-server-featuremap-service
 #
 # Note:        When we turned off our REST services Home Directory, this script
 #              started sending e-mails about the service being down (403 error)
@@ -15,7 +17,7 @@
 #              special clause for 403 errors to try to mitigate this issue.
 #
 # Created:     6/14/2017
-# Updated:     1/8/2019
+# Updated:     1/11/2019
 # Copyright:
 # Licence:
 #-------------------------------------------------------------------------------
@@ -24,7 +26,7 @@
 import arcpy, urllib, urllib2, json, os, math, sys, emailModule
 
 # Function to copy features from a map or feature service to a feature class
-def copyFeaturesFromService(service, featureClass, logFile, email , agsServer=False, agolServer=False, tokenUrlPart='', username='', password=''):
+def copyData(service, featureClass, logFile, email , agsServer=False, agolServer=False, tokenUrlPart='', username='', password=''):
     """ Function to copy features from a map or feature service to a feature class.
         service = the URL for the map/feature service. You must include the number at the end (/0).
         featureClass = the output location and name of the layer you are copying data to.
@@ -42,6 +44,8 @@ def copyFeaturesFromService(service, featureClass, logFile, email , agsServer=Fa
         # messages are added to this variable
         # this variable is written to the log file at the end of the script
         logMsg = ''
+        # add message
+        logMsg += '\nAttempting to copy data from {} to {}\n'.format(service,featureClass)
 
         from arcpy import env
         # overwite output
@@ -65,16 +69,17 @@ def copyFeaturesFromService(service, featureClass, logFile, email , agsServer=Fa
                 emailSubject = 'Map Service Down'
                 emailMessage = 'Your service, {}, appeared to be down when we tried to access it.\n'.format(service)
                 emailMessage += '\nError Code: {}; Error Reason: {}\n'.format(error_code, error_reason)
+                logMsg += '\nThere was an error accessing the service: {}.\n'.format(service)
+                logMsg += '\nError Code: {}; Error Reason: {}\n'.format(error_code, error_reason)
                 # handle 403 errors seperately. These can occur if REST Home Directories are disabled
                 if error_code == 403:
-                    logMsg += '\nThere may have been an error accessing the service.\n'
-                    logMsg += '\nError Code: {}; Error Reason: {}\n'.format(error_code, error_reason)
                     logMsg += '\nIf this error is a result of the ArcGIS REST Home Directory being disabled, the data should still copy over unless there is another error.\n'
+                    logMsg += '\nPlease check this result log for additional errors.\n'
                     # add additional e-mail message
                     emailMessage += '\nIf this error resulted because the ArcGIS REST Home Directory is disabled, the data should still copy over.\n'
+                    emailMessage += "\nIf there were additional errors, they are reported in the script's log file.\n"
                 else:
-                    logMsg += '\nThere was an error accessing the service.\n'
-                    logMsg += '\nError Code: {}; Error Reason: {}\n'.format(error_code, error_reason)
+                    pass
                 # send email
                 emailModule.sendEmail(emailMessage,emailSubject,email)
                 # log that e-mail has been sent
@@ -83,7 +88,6 @@ def copyFeaturesFromService(service, featureClass, logFile, email , agsServer=Fa
                 # end for
         except:
             pass
-            # do messages occur for copying the data over?
 
         # service url with '/query' appended
         baseURL = r'{}/query'.format(service)
@@ -320,7 +324,6 @@ def copyFeaturesFromService(service, featureClass, logFile, email , agsServer=Fa
         try:
             # clean up
             del searchRow, searchRows, insertRows
-
         except:
             pass
 

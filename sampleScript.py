@@ -10,10 +10,7 @@ env.overwriteOutput = True
 
 # log file to write messages to
 # update path and file name
-logFile = r'[path]\[to]\[file]\Results.txt'
-
-# placeholder for messages for log file
-logMsg = ''
+log_file = r'[path]\[to]\[file]\Results.txt'
 
 # geodatabase to store feature classes in
 fgdb = r'[path]\[to]\[file]\Geodata.gdb'
@@ -23,28 +20,26 @@ email = ['johnDoe@emailwebsite.com']
 # send email notification to multiple e-mail addresses
 email = ['johnDoe@emailwebsite.com', 'jessesjames@outlaw.com', 'allyourbasearebelongtous@evilvillian.biz']
 
-# sample layer - unsecured
-logMsg += 'Copying US States\n'
+# sample layer - unsecured - Pennsylvania Turnpike Plazas
 # service URL
-statesService = r'https://sampleserver6.arcgisonline.com/arcgis/rest/services/Census/MapServer/3'
+turnpike_plaza_service = r'https://maps.pasda.psu.edu/arcgis/rest/services/pasda/PennDOT/MapServer/1'
 # feature class name
-statesFC = os.path.join(fgdb, 'US_States')
-
-# call function on portland trees
-copyFeaturesFromService.copyFeaturesFromService(statesService,statesFC,logFile,email,True)
+turnpike_plaza_FC = os.path.join(fgdb, 'PA_Turnpike_Plazas')
+# call function on Pennsylvania Turnpike Plazas
+copyFeaturesFromService.copyData(turnpike_plaza_service,turnpike_plaza_FC,log_file,email,True)
 
 # sample layer - secured
-logMsg += '\nCopying Wildfire Response\n'
+# Note: this service produces an error when attempting to copy the records.
+# I am including it in the sample simply to show how you would use this module witha  secured service
 # based on Esri Leaflet sample - https://esri.github.io/esri-leaflet/examples/arcgis-server-auth.html
-wildfireResponseService = r'https://sampleserver6.arcgisonline.com/arcgis/rest/services/Wildfire_secure_ac/MapServer/0'
+wildfire_response_service = r'https://sampleserver6.arcgisonline.com/arcgis/rest/services/Wildfire_secure_ac/MapServer/0'
 # feature class name
-wildfireResponse = os.path.join(fgdb, 'WildfireResponse')
+wildfire_response_FC = os.path.join(fgdb, 'WildfireResponse')
 # token URL part
-tokenURLPart = r'arcgis/tokens/generateToken'
+token_url_part = r'arcgis/tokens/generateToken'
 # username
 username = 'user1'
 # password
 password = 'user1'
-
-# call function
-copyFeaturesFromService.copyFeaturesFromService(wildfireResponseService,wildfireResponse,logFile,email,True,False,tokenURLPart,username,password)
+# call function on Wildfire Response
+copyFeaturesFromService.copyData(wildfire_response_service,wildfire_response_FC,log_file,email,True,False,token_url_part,username,password)
