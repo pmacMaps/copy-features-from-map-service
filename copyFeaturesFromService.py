@@ -7,18 +7,18 @@
 # Description: Script based upon map service extract tool developed by Jake
 #              Skinner from Esri.  Module contains a function for copying data
 #              from map/feature services to a feature class.
+#              This script is based upon the tool availabled at
+#              https://community.esri.com/docs/DOC-6496-download-arcgis-online-feature-service-or-arcgis-server-featuremap-service
 #
 # Created:     6/14/2017
-# Updated:     7/12/2017
-# Copyright:
-# Licence:
+# Updated:     1/11/2019
 #-------------------------------------------------------------------------------
 
 # import modules
 import arcpy, urllib, urllib2, json, os, math, sys
 
 # Function to copy features from a map or feature service to a feature class
-def copyFeaturesFromService(service, featureClass, logFile, agsServer=False, agolServer=False, tokenUrlPart='', username='', password=''):
+def copyData(service, featureClass, logFile, agsServer=False, agolServer=False, tokenUrlPart='', username='', password=''):
     """ Function to copy features from a map or feature service to a feature class.
         service = the URL for the map/feature service. You must include the number at the end (/0).
         featureClass = the output location and name of the layer you are copying data to.
@@ -35,6 +35,8 @@ def copyFeaturesFromService(service, featureClass, logFile, agsServer=False, ago
         # messages are added to this variable
         # this variable is written to the log file at the end of the script
         logMsg = ''
+        # add message
+        logMsg += '\nAttempting to copy data from {} to {}\n'.format(service,featureClass)
 
         from arcpy import env
         # overwite output
