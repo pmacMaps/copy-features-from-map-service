@@ -1,5 +1,9 @@
 # Copy Features from a Map/Feature Service
 
+***The code in this repository uses Python 2.x.  You can copy features from a map or feature service using the [Export Features](https://pro.arcgis.com/en/pro-app/latest/tool-reference/conversion/export-features.htm) tool availble in ArcGIS Pro.  That version of ArcPy uses Python 3.x.  You are encouraged to use that tool instead of this repository.***
+
+***If you are interested in copying features from an Esri REST service outside of ArcPy, then check out [esridumpgdf](https://github.com/wchatx/esridumpgdf) or [pyesridump](https://github.com/openaddresses/pyesridump).***
+
 This Python script is a module for copying records from a map/feature service to a feature class, using the Esri ArcPy site package.
 It is designed to be run as a function and writes messages to a text file.
 
